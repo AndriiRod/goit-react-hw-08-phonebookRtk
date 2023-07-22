@@ -1,24 +1,42 @@
-import ContactItem from 'components/ContactItem/';
 import PropTypes from 'prop-types';
 
+import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import { useGetContactsQuery } from 'redux/contacts/contactsSlice';
 
-import { selectStatus, selectVisibleContact } from 'redux/selectors';
-
-import { List } from './ContactsList.styled';
+import ContactItem from 'components/ContactItem/';
 import Loader from 'components/Loader/Loader';
 
-const ContactsList = () => {
-  const status = useSelector(selectStatus);
+import { selectFilter } from 'redux/selectors';
 
-  const visibleContact = useSelector(selectVisibleContact);
+import { List } from './ContactsList.styled';
+
+const ContactsList = () => {
+  const filter = useSelector(selectFilter);
+  const { data, error, isLoading } = useGetContactsQuery();
+
+  const getVisibleContact = () => {
+    const contacts = data;
+
+    if (filter === '') {
+      return contacts;
+    }
+    const formatFilter = filter.toLowerCase().trim();
+    return contacts.filter(({ name }) => {
+      const formatName = name.toLowerCase().trim();
+      return formatName.includes(formatFilter);
+    });
+  };
+
+  const visibleContact = getVisibleContact();
 
   return (
     <>
-      {status && <Loader />}
-      {visibleContact.length !== 0 && (
+      {isLoading && <Loader />}
+      {error && toast.error(error.message)}
+      {visibleContact?.length !== 0 && (
         <List>
-          {visibleContact.map(({ id, name, number, avatar }) => (
+          {visibleContact?.map(({ id, name, number, avatar }) => (
             <ContactItem
               key={id}
               id={id}

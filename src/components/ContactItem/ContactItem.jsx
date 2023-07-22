@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { deleteContacts } from 'redux/operations';
+import { useDeleteContactMutation } from 'redux/contacts/contactsSlice';
 
 import {
   Item,
@@ -15,7 +14,7 @@ import {
 import placeholder from '../../images/placeholder.png';
 
 const ContactItem = ({ id, name, number, avatar }) => {
-  const dispatch = useDispatch();
+  const [deleteContact, { isLoading }] = useDeleteContactMutation();
 
   return (
     <Item>
@@ -24,7 +23,11 @@ const ContactItem = ({ id, name, number, avatar }) => {
         <Name>{name}</Name>
         <Number>{number}</Number>
       </TextWrap>
-      <DeleteBtn type="button" onClick={() => dispatch(deleteContacts(id))}>
+      <DeleteBtn
+        type="button"
+        onClick={() => deleteContact(id)}
+        disabled={isLoading}
+      >
         <Icon />
       </DeleteBtn>
     </Item>

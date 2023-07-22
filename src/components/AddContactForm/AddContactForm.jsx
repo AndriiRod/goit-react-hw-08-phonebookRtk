@@ -1,11 +1,11 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { nanoid } from 'nanoid';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { toast } from 'react-toastify';
-
-import { selectContacts } from 'redux/selectors';
-import { addContacts } from 'redux/operations';
+import {
+  useAddContactsMutation,
+  useGetContactsQuery,
+} from 'redux/contacts/contactsSlice';
 
 import schema from '../../validation/schema';
 
@@ -19,8 +19,8 @@ import {
 } from './AddContactForm.styled';
 
 const AddContactForm = () => {
-  const contacts = useSelector(selectContacts);
-  const dispatch = useDispatch();
+  const [addContact] = useAddContactsMutation();
+  const { data: contacts } = useGetContactsQuery();
 
   const {
     register,
@@ -48,7 +48,7 @@ const AddContactForm = () => {
       return;
     }
     toast.success('New contact added!!');
-    dispatch(addContacts(data));
+    addContact(data);
     reset();
   };
 

@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+
 import {
   Section,
   Header,
@@ -8,18 +7,17 @@ import {
   NavLinkWrap,
   Counter,
 } from './SharedLayout.styled';
-import { selectContacts, selectError } from 'redux/selectors';
+import { useGetContactsQuery } from 'redux/contacts/contactsSlice';
 
 const SharedLayout = () => {
-  const contacts = useSelector(selectContacts);
-  const error = useSelector(selectError);
-  error && toast.error(error);
+  const { data } = useGetContactsQuery();
+
   return (
     <Section>
       <Header>
         <Nav>
           <NavLinkWrap to="/">
-            Contacts <Counter>{contacts.length}</Counter>
+            Contacts <Counter>{data?.length}</Counter>
           </NavLinkWrap>
           <NavLinkWrap to="/addContact">Add New Contact</NavLinkWrap>
         </Nav>
